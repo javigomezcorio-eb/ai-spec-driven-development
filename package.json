@@ -6,10 +6,16 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
-    "ios": "npx expo run:ios --device \"iPhone 17\"",
+    "ios": "expo run:ios --device \"iPhone 17\"",
     "web": "expo start --web",
     "e2e:build:ios": "detox build --configuration ios.sim.debug",
     "e2e:test:ios": "detox test --configuration ios.sim.debug",
+    "e2e:ios:test-only": "npm run e2e:test:ios",
+    "e2e:ios": "npm run e2e:build:ios && npm run e2e:test:ios",
+    "e2e:build:android": "detox build --configuration android.emu.release",
+    "e2e:test:android": "detox test --configuration android.emu.release",
+    "e2e:android:test-only": "npm run e2e:test:android",
+    "e2e:android": "npm run e2e:build:android && npm run e2e:test:android",
     "test": "jest"
   },
   "dependencies": {
@@ -34,7 +40,13 @@
       "ios.debug": {
         "type": "ios.app",
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/FourScreensMenu.app",
-        "build": "npx expo prebuild -p ios --clean && xcodebuild -workspace ios/FourScreensMenu.xcworkspace -scheme FourScreensMenu -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.2' -derivedDataPath ios/build"
+        "build": "expo prebuild -p ios --clean && xcodebuild -workspace ios/FourScreensMenu.xcworkspace -scheme FourScreensMenu -configuration Debug -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.2' -derivedDataPath ios/build"
+      },
+      "android.release": {
+        "type": "android.apk",
+        "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
+        "testBinaryPath": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+        "build": "cd android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug"
       }
     },
     "devices": {
@@ -44,12 +56,22 @@
           "type": "iPhone 17",
           "os": "26.2"
         }
+      },
+      "android.emulator": {
+        "type": "android.emulator",
+        "device": {
+          "avdName": "Pixel_3a_API_34_extension_level_7_arm64-v8a"
+        }
       }
     },
     "configurations": {
       "ios.sim.debug": {
         "device": "ios.simulator",
         "app": "ios.debug"
+      },
+      "android.emu.release": {
+        "device": "android.emulator",
+        "app": "android.release"
       }
     }
   }
