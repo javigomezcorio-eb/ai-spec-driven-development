@@ -29,6 +29,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
+  activeIndicator: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: "#111827",
+  },
+  activeIndicatorHidden: {
+    opacity: 0,
+  },
+  activeIndicatorVisible: {
+    opacity: 1,
+  },
   navLabel: {
     fontSize: 12,
     fontWeight: "600",
