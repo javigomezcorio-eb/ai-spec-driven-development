@@ -4,6 +4,6 @@ describe("Bottom navigation", () => {
   });
 
   it("shows the Discover button on launch", async () => {
-    await expect(element(by.label("Discover"))).toBeVisible();
+    await expect(element(by.id("nav-discover"))).toBeVisible();
   });
 });

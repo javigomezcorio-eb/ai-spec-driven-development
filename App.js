@@ -17,6 +17,7 @@ export default function App() {
           onPress={() => setScreen(1)}
           accessibilityRole="button"
           accessibilityLabel="Discover"
+          testID="nav-discover"
         >
           <Feather
             name="home"
