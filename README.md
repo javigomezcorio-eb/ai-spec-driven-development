@@ -1,31 +1,84 @@
-# React Native Spec-Driven-Development Demo
+# Spec-Driven Development Demo
 
-This is a simple React Native mobile app to prove the value of using Spec Driven Development with OpenSpec.
+A demonstration of **Spec-Driven Development** (SDD) using [OpenSpec](https://openspec.dev). The repository contains a simple React Native app that serves as a canvas for applying structured, spec-driven changes — showing how proposals, specs, designs, and tasks create a traceable decision record alongside the code.
+
+## Why this repo exists
+
+Most codebases grow organically without capturing *why* things were built a certain way. Spec-Driven Development fixes that by requiring every meaningful change to flow through:
+
+1. **Proposal** — Why are we doing this?
+2. **Specs** — What exactly should happen? (testable WHEN/THEN scenarios)
+3. **Design** — How will we build it? (decisions, tradeoffs)
+4. **Tasks** — What are the implementation steps?
+5. **Implementation** — Code the tasks, check them off
+6. **Archive** — Preserve the full decision record
+
+This repo demonstrates that workflow end-to-end on a real (if simple) app.
+
+## The app
+
+A four-tab React Native mobile app built with Expo. It's intentionally minimal so the focus stays on the development workflow, not the product:
+
+- Four screens: Discover, Saved, Tickets, Account
+- Manual tab navigation via state
+- Dark mode with a sun/moon toggle on the Discover screen
+- Unit tests (Jest) and E2E tests (Detox)
+
+## OpenSpec workflow
+
+The `openspec/` directory holds the project's spec-driven artifacts:
+
+```
+openspec/
+├── config.yaml                           # OpenSpec configuration
+├── specs/                                # Living specs (current truth)
+│   └── dark-mode/spec.md
+└── changes/
+    └── archive/                          # Completed changes (decision history)
+        └── 2026-02-23-add-dark-mode/
+            ├── proposal.md
+            ├── design.md
+            ├── specs/dark-mode/spec.md
+            └── tasks.md
+```
+
+Browse `openspec/changes/archive/` to see the full reasoning behind each change — not just *what* changed, but *why* and *how* the decisions were made.
+
+### OpenSpec commands (Cursor)
+
+| Command | What it does |
+|---------|--------------|
+| `/opsx:explore` | Think through problems before/during work |
+| `/opsx:new` | Start a new change, step through artifacts |
+| `/opsx:ff` | Fast-forward: create all artifacts at once |
+| `/opsx:continue` | Continue working on an existing change |
+| `/opsx:apply` | Implement tasks from a change |
+| `/opsx:verify` | Verify implementation matches artifacts |
+| `/opsx:archive` | Archive a completed change |
+| `/opsx:onboard` | Guided walkthrough of the full workflow |
 
 ## Tech stack
 
-- `expo` `~54.0.33`
-- `react-native` `0.81.5`
-- `react` `19.1.0`
-- Jest (`jest`, `jest-expo`, `react-test-renderer`)
-- Detox (`detox`, `jest-circus`)
+| Layer | Technology |
+|-------|------------|
+| Framework | React Native `0.81.5` via Expo `~54.0.33` |
+| Language | JavaScript (ES modules via Babel/Expo) |
+| Unit Testing | Jest `^29.7.0` + `jest-expo` + `react-test-renderer` |
+| E2E Testing | Detox `^20.47.0` (iOS simulator) |
+| Workflow | OpenSpec `^1.1.1` |
 
 ## Project structure
 
-- `App.js`: main app entry point
-- `styles.js`: app styles
-- `tests/__tests__/`: unit tests (Jest)
-- `tests/e2e/`: E2E tests (Detox)
-
-## Scripts
-
-```sh
-npm start            # Expo dev server
-npm run ios          # Run app on configured iOS simulator
-npm run android      # Run app on Android
-npm run test         # Run unit tests
-npm run e2e:build:ios
-npm run e2e:test:ios
+```
+├── App.js                  # Main entry point
+├── styles.js               # Centralized styles (theme-aware)
+├── AGENTS.md               # AI agent configuration
+├── openspec/               # Spec-driven artifacts
+├── tests/
+│   ├── __tests__/          # Unit tests (Jest)
+│   └── e2e/                # E2E tests (Detox)
+├── .cursor/commands/       # OpenSpec Cursor commands
+└── .codex/skills/          # OpenSpec Codex skills
 ```
 
 ## Setup
@@ -34,86 +87,63 @@ npm run e2e:test:ios
 npm install
 ```
 
-## Run the app
-
-### iOS simulator
-
-Current script targets:
-- device: `iPhone 17`
-- iOS runtime: `26.2` (for Detox build destination)
-
-Run:
+## Running the app
 
 ```sh
-npm run ios
+npm start              # Expo dev server
+npm run ios            # iOS simulator
+npm run android        # Android emulator
 ```
 
-If that specific simulator is not available on your machine, update these fields in `package.json`:
+### iOS simulator targets
+
+- Device: `iPhone 17`
+- iOS runtime: `26.2`
+
+If your simulator differs, update these in `package.json`:
 - `scripts.ios`
 - `detox.apps.ios.debug.build` destination
 - `detox.devices.ios.simulator.device`
 
-You can list installed simulators with:
+List available simulators:
 
 ```sh
 xcrun simctl list devices available
 ```
 
-## Unit tests (Jest)
+## Testing
 
-Run:
+### Unit tests
 
 ```sh
 npm test
 ```
 
-Current basic test:
-- `tests/__tests__/App.test.js`
-- Validates `Discover` text renders.
+### E2E tests (iOS)
 
-## E2E tests (Detox, iOS)
-
-### Prerequisites
-
-- Xcode + iOS simulator runtime installed
-- `applesimutils` installed:
+Prerequisites:
 
 ```sh
 brew tap wix/brew
 brew install applesimutils
 ```
 
-### Build and run
+Build and run:
 
 ```sh
 npm run e2e:build:ios
 npm run e2e:test:ios
 ```
 
-### Current E2E test
+Or combined:
 
-- `tests/e2e/app.e2e.js`
-- Launches app and checks `Discover` button is visible.
+```sh
+npm run e2e:ios
+```
 
 ## Troubleshooting
 
-- **`Missing script: e2e`**
-  - Use `npm run e2e:build:ios` and `npm run e2e:test:ios`.
-
-- **`applesimutils: command not found`**
-  - Install with Homebrew (see prerequisites).
-
-- **Detox framework cache error**
-  - Run:
-    ```sh
-    npx detox clean-framework-cache
-    npx detox build-framework-cache
-    ```
-
-- **`Unable to find a device matching destination`**
-  - The simulator name/OS in `package.json` does not match your installed runtime.
-  - Check available devices using `xcrun simctl list devices available` and update config.
-
-- **App binary not found for Detox**
-  - Build first: `npm run e2e:build:ios`
-  - Then test: `npm run e2e:test:ios`
+- **`applesimutils: command not found`** — Install with Homebrew (see prerequisites above).
+- **Detox framework cache error** — Run `npx detox clean-framework-cache && npx detox build-framework-cache`.
+- **`Unable to find a device matching destination`** — Your simulator config doesn't match installed runtimes. Check with `xcrun simctl list devices available`.
+- **App binary not found for Detox** — Build first with `npm run e2e:build:ios`.
