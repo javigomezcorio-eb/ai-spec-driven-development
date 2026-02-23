@@ -1,14 +1,32 @@
 import React, { useState } from "react";
 import { SafeAreaView, View, Text, Pressable } from "react-native";
 import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import styles from "./styles";
+import getStyles from "./styles";
 
 export default function App() {
   const [screen, setScreen] = useState(1);
+  const [isDark, setIsDark] = useState(false);
+
+  const styles = getStyles(isDark);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
+        {screen === 1 && (
+          <Pressable
+            style={styles.themeToggle}
+            onPress={() => setIsDark((prev) => !prev)}
+            accessibilityRole="button"
+            accessibilityLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            testID="theme-toggle"
+          >
+            <Feather
+              name={isDark ? "sun" : "moon"}
+              size={24}
+              color={styles.activeColor.color}
+            />
+          </Pressable>
+        )}
         <Text style={styles.bigNumber}>{screen}</Text>
       </View>
       <View style={styles.navBar}>
@@ -39,6 +57,7 @@ export default function App() {
           onPress={() => setScreen(2)}
           accessibilityRole="button"
           accessibilityLabel="Saved"
+          testID="nav-saved"
         >
           <Feather
             name="heart"
@@ -60,6 +79,7 @@ export default function App() {
           onPress={() => setScreen(3)}
           accessibilityRole="button"
           accessibilityLabel="Tickets"
+          testID="nav-tickets"
         >
           <MaterialCommunityIcons
             name="ticket-outline"
@@ -81,6 +101,7 @@ export default function App() {
           onPress={() => setScreen(4)}
           accessibilityRole="button"
           accessibilityLabel="Account"
+          testID="nav-account"
         >
           <Ionicons
             name="person-outline"
